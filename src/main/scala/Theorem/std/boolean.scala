@@ -14,7 +14,7 @@ trait booleanInstances {
     }
   }
 
-  implicit val booleanEq = Eq.equalA[Boolean]
+  implicit val booleanEq: Eq[Boolean] = Eq.equalA[Boolean]
 
 }
 

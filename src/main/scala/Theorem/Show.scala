@@ -5,7 +5,7 @@ import Theorem.syntax.ShowSyntax
 trait Show[T] {
   def show(value: T): String
 
-  val showSyntax = new ShowSyntax[T] { def T = Show.this}
+  val showSyntax: ShowSyntax[T] = new ShowSyntax[T] { def T: Show[T] = Show.this}
 }
 
 object Show {

@@ -23,7 +23,7 @@ class SemigroupTest extends mutable.Specification{
         SemigroupLaws.associativityLaw(1, 2, 3)
       }
       "laws that don't match up" >> {
-        implicit val DivisionSemigroup = new Semigroup[Double] {
+        implicit val DivisionSemigroup: Semigroup[Double] = new Semigroup[Double] {
           override def append(left: Double, right: => Double): Double = left / right
         }
 

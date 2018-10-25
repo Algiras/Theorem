@@ -4,7 +4,7 @@ import Theorem._
 
 trait ListInstances0 {
   implicit def listEq[A](implicit A0: Eq[A]): Eq[List[A]] = new ListEq[A] {
-    override implicit def A = A0
+    override implicit def A: Eq[A] = A0
   }
 }
 

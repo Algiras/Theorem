@@ -3,7 +3,7 @@ package Theorem.syntax
 import Theorem.Show
 
 final class ShowOps[T](val self: T)(implicit val ev: Show[T]) {
-  def show = ev.show(self)
+  def show: String = ev.show(self)
 }
 
 trait ToShowOps {

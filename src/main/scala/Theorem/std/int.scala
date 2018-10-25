@@ -11,7 +11,7 @@ trait IntInstances {
     override def zero: Int = 0
   }
 
-  implicit val intEq = Eq.equalA[Int]
+  implicit val intEq: Eq[Int] = Eq.equalA[Int]
 }
 
 object int extends IntInstances {}

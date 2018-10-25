@@ -16,7 +16,7 @@ class MonadTest extends mutable.Specification {
         MonadLaws.allMonadLaws[List, Int, Int, String](1, v => List(v, v), v => List(v.toString, v.toString))
       }
       "laws that don't match up" >> {
-        implicit val badMonad = new Monad[Seq]{
+        implicit val badMonad: Monad[Seq] = new Monad[Seq]{
           override def flatMap[A, B](value: Seq[A])(fn: A => Seq[B]): Seq[B] = Seq.empty[B]
 
           override def pure[A](value: A): Seq[A] = Seq.empty[A]
