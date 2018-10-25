@@ -1,21 +1,23 @@
-import scalaz.StateT
+import scalaz.IndexedReaderWriterStateT
+import scalaz.std.list._
 import scalaz.std.option._
 
 import scala.util.Random
 
-type CS[T] = StateT[Option, Random, T]
+type CS[T] = IndexedReaderWriterStateT[Option, Int, List[String], Random, Random, T]
 
-def CS[T] = StateT[Option, Random, T](_)
+def CS[T] = IndexedReaderWriterStateT[Option, Int, List[String], Random, Random, T] _
 
-val MD = StateT.stateTMonadState[Random, Option]
+val MD = IndexedReaderWriterStateT.rwstMonad[Option, Int, List[String], Random]
 
-val randomInt: CS[Int] = StateT((v: Random) => Option(v, v.nextInt()))
+val randomInt: CS[Int] = IndexedReaderWriterStateT((_, s) => Option((List.empty[String], s.nextInt(), s)))
 
 val randomDouble = for {
   state <- MD.get
 } yield state.nextDouble()
 
-def randomPositiveInt(size: Int): CS[Int] = for {
+val randomPositiveInt: CS[Int] = for {
+  size <- MD.ask
   nr <- randomDouble
 } yield (nr * size).toInt
 
@@ -31,7 +33,7 @@ def randomPair[A, B](left: CS[A], right: CS[B]): CS[(A, B)] = {
 }
 
 val randomString: CS[String] = for {
-  nr <- randomPositiveInt(100)
+  nr <- randomPositiveInt
   state <- MD.get
 } yield state.nextString(nr)
 
@@ -46,17 +48,18 @@ def randomList[T](pairGenerator: CS[T]): CS[List[T]] = {
 
 case class Person(name: String, balance: Int)
 
-def randomPerson: CS[Person] = for {
+def randomPerson = for {
   name <- randomString
+  _ <- MD.tell(List("message"))
   balance <- randomInt
 } yield Person(name, balance)
 
-val a = randomList(randomPair(randomInt, randomInt)).eval(new Random(1L))
-val b = randomList(randomBool).eval(new Random(1L))
+val a = randomList(randomPair(randomInt, randomInt)).run(0, new Random(1L))
+val b = randomList(randomBool).run(0, new Random(1L))
 
 
-val c = randomList(randomPositiveInt(10)).eval(new Random(1L))
+val c = randomList(randomPositiveInt).run(0, new Random(1L))
 
-val d = randomList(randomPerson).eval(new Random(1L))
+val d = randomPerson.run(12, new Random(1L))
 
 
